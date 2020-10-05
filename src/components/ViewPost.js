@@ -43,7 +43,7 @@ export default function ViewPost(props) {
             Api.showPost(props.match.params.id).then(response => {
                 setItemsPosts(response);
                 setUser(response.user)
-                setComments(response.comments)
+                setComments(JSON.stringify(response.comments))
                 setRatings(JSON.stringify(response.rating))
             });
         }

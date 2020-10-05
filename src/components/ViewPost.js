@@ -65,7 +65,6 @@ export default function ViewPost(props) {
                 if (ratings.length !== 0) {
                     JSON.parse(ratings).map(rating => {
                         if (rating.qualifier_id === auth.id) {
-                            console.log("entro")
                             value = rating.score;
                             readOnly = true;
                         }

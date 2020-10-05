@@ -10,6 +10,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Rating from '@material-ui/lab/Rating';
 import * as Api from "../service/Api";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,8 +29,13 @@ const useStyles = makeStyles((theme) => ({
 export default function ViewPost(props) {
     const classes = useStyles();
     const [itemsPost, setItemsPosts] = useState([]);
+    const [ratings, setRatings] = useState([]);
     const [user, setUser] = useState([]);
     const [comments, setComments] = useState([]);
+    const { isLogin, auth } = useSelector(state => ({
+        isLogin: state.isLogin,
+        auth: state.user
+    }));
 
     useEffect(() => {
         let mounted = true
@@ -38,6 +44,7 @@ export default function ViewPost(props) {
                 setItemsPosts(response);
                 setUser(response.user)
                 setComments(response.comments)
+                setRatings(JSON.stringify(response.rating))
             });
         }
         return () => {
@@ -46,6 +53,33 @@ export default function ViewPost(props) {
             }
         }
     },[]);
+
+    const viewRatings = () => {
+        let value = 0;
+        let readOnly = false;
+        if (isLogin) {
+            if (user.name === auth.name) {
+                readOnly = true;
+                value = Math.round(itemsPost.average);
+            } else {
+                if (ratings.length !== 0) {
+                    JSON.parse(ratings).map(rating => {
+                        if (rating.qualifier_id === auth.id) {
+                            console.log("entro")
+                            value = rating.score;
+                            readOnly = true;
+                        }
+                    })
+                }
+            }
+        }
+        return (
+            <Typography variant="body2" color="textSecondary" component="small">
+                Calificacion: <Rating name="half-rating" value={value} precision={0.5} size="small" readOnly={readOnly} />
+            </Typography>
+        )
+    }
+
 
     return (
         <Container component="main" maxWidth="lg">
@@ -64,9 +98,7 @@ export default function ViewPost(props) {
                         </Typography>
                         <br/>
                         <Divider />
-                        <Typography variant="body2" color="textSecondary" component="small">
-                            Calificacion: <Rating name="half-rating" value={0} precision={0.5} size="small" />
-                        </Typography>
+                        {viewRatings()}
                         <Typography gutterBottom variant="h5" component="h2">
                             {itemsPost.title}
                         </Typography>

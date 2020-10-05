@@ -31,7 +31,7 @@ function IsLogin() {
     return (
         <Switch>
             <Route path="/dashboard" component={Dashboard} />
-            <Route exact={true} path='/post:id' component={ViewPost} />
+            <Route exact={true} path='/post/:id' component={ViewPost} />
             <Route exact path='/' component={Post} />
         </Switch>
     );
